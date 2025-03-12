@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/GrudTrigger/workly-backend/auth/pkg/helpers"
 	"github.com/GrudTrigger/workly-backend/auth/pkg/jwt"
@@ -17,8 +18,8 @@ type accountService struct {
 	repository Repository
 }
 
-func NewAccountService(r Repository) Service {
-	return &accountService{r}
+func NewAccountService() Service {
+	return &accountService{}
 }
 
 func(s *accountService) Register(ctx context.Context, acc AccountResponse) (*jwt.JWTData, error) {
@@ -36,6 +37,11 @@ func(s *accountService) Register(ctx context.Context, acc AccountResponse) (*jwt
 	}
 	if err := s.repository.PostAccount(ctx, a); err != nil {
 		return nil, err
+	}
+	token, err := jwt.NewJWT(handler.config.Secret).Create(jwt.JWTData{UserID: jwtData.UserID})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	jwtData := jwt.JWTData{
