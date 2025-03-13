@@ -15,8 +15,8 @@ type accountRepository struct {
 	db *sql.DB
 }
 
-func NewAccountRepository(url string)(Repository, error) {
-	db, err := sql.Open("postgres", url)
+func NewAccountRepository(dsn string)(Repository, error) {
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}

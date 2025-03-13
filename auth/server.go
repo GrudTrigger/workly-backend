@@ -39,8 +39,8 @@ func(s *grpcServer) Register(ctx context.Context, r *pb.RegisterRequest) (*pb.Re
 		return &pb.RegisterResponse{}, err
 	}
 	return &pb.RegisterResponse{
-		Token: result.Token,
-	}
+		Token: result,
+	}, nil
 } 
 
 func(s *grpcServer) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginResponse, error) {

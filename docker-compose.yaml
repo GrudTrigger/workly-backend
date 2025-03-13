@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  auth_db:
+    build:
+      context: .
+      dockerfile: ./auth/db.dockerfile
+    container_name: auth_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: link
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  auth_service:
+    build:
+      context: .
+      dockerfile: ./auth/app.dockerfile
+    container_name: auth_service
+    restart: always
+    depends_on:
+      - auth_db
+    environment:
+      DB_DSN: 'postgres://postgres:12345@auth_db:5432/link?sslmode=disable'
+    ports:
+      - '8081:8081'
+
+volumes:
+  pg_data:
