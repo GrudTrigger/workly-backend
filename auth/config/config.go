@@ -13,9 +13,10 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
-	err := godotenv.Load("../.env")
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Println("Ошибка при загрузке .env файла в сервисе auth")
+		log.Println("Ошбика загрузки env файла в auth service")
+		log.Println(err)
 	}
 	return &Config{
 		Secret: os.Getenv("SECRET"),

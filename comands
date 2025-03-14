@@ -1,0 +1,1 @@
+docker run --rm -it workly-backend-auth_service sh - подключение к образу чтобы посмотреть что внутри

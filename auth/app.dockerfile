@@ -10,20 +10,23 @@ COPY go.mod go.sum ./
 # Загружаем зависимости
 RUN go mod download
 
-# Копируем все файлы проекта
-COPY . .
+# Копируем остальные файлы проекта
+COPY auth auth
 
 # Собираем бинарный файл
-RUN go build -o /go/bin/app ./auth/cmd/
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /go/bin/app ./auth/cmd/
+
+# Используем минимальный образ для финального контейнера
+FROM alpine:latest
 
 # Устанавливаем рабочую директорию
-WORKDIR /root/
+WORKDIR /usr/bin
 
 # Копируем бинарный файл из предыдущего этапа
-COPY --from=build /go/bin .
+COPY --from=builder /go/bin .
 
-# Открываем порт, если требуется (замени на нужный)
-EXPOSE 8080
+# Открываем порт, если требуется (замените на нужный)
+EXPOSE 8081
 
 # Запускаем приложение
-CMD ["./main"]
+CMD ["app"]

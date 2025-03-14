@@ -11,6 +11,7 @@ func main() {
 	conf := config.LoadConfig()
 	repo, err := auth.NewAccountRepository(conf.Dsn)
 	if err != nil {
+		log.Println("Ошибка подключения к бд в auth service")
 		panic(err)
 	}
 	defer repo.Close()
