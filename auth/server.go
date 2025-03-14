@@ -44,8 +44,26 @@ func(s *grpcServer) Register(ctx context.Context, r *pb.RegisterRequest) (*pb.Re
 } 
 
 func(s *grpcServer) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginResponse, error) {
-	fmt.Println("request server auth", r)
+	result, err := s.service.Login(ctx, r.Email, r.Password)
+	if err != nil {
+		return &pb.LoginResponse{}, err
+	}
 	return &pb.LoginResponse{
-		Token: "jnbhrgbtui34y598",
+		Token: result,
 	}, nil
 } 
+
+func(s *grpcServer) GetMe(ctx context.Context, r *pb.GetMeRequest) (*pb.GetMeResponse, error) {
+	account, err := s.service.GetMe(ctx, r.Id)
+	if err != nil {
+		return &pb.GetMeResponse{}, err
+	}
+	return &pb.GetMeResponse{
+		Account: &pb.Account{
+			Id: account.ID,
+			Email: account.Email,
+			Password: account.Password,
+			Role: account.Role,
+		},
+	}, nil
+}

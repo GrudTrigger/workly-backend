@@ -10,7 +10,8 @@ import (
 
 type Service interface {
 	Register(ctx context.Context, a AccountResponse) (string, error)
-	Login(ctx context.Context, email, password string) (*jwt.JWTData, error)
+	Login(ctx context.Context, email, password string) (string, error)
+	GetMe(ctx context.Context, id string) (*Account, error)
 }
 
 type accountService struct {
@@ -43,26 +44,36 @@ func(s *accountService) Register(ctx context.Context, acc AccountResponse) (stri
 	}
 	token, err := jwt.NewJWT(s.secret).Create(jwt.JWTData{UserID: a.ID})
 	if err != nil {
-		return "nil", err
+		return "", err
 	}
 	return token, nil
 }
 
-func(s *accountService) Login(ctx context.Context, email, password string) (*jwt.JWTData, error) {
+func(s *accountService) Login(ctx context.Context, email, password string) (string, error) {
 	existedUser, err := s.repository.GetAccountByEmail(ctx, email)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(existedUser.Password), []byte(password))
 	if err != nil {
-		return &jwt.JWTData{}, nil	
+		return "", err	
 	}
 
-	jwtData := jwt.JWTData{
-		UserID: existedUser.ID,
+
+	token, err := jwt.NewJWT(s.secret).Create(jwt.JWTData{UserID: existedUser.ID})
+	if err != nil {
+		return "", err
 	}
 
-	return &jwtData, nil
+	return token, nil
 }
 
+func(s *accountService) GetMe(ctx context.Context, id string) (*Account, error) {
+	findUser, err := s.repository.GetAccountById(ctx, id)
+	if err != nil {
+		return &Account{}, err
+	}
+	return findUser, nil
+
+}

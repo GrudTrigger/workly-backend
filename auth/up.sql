@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS account (
-    id CHAR(27) PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS accounts (
+    id VARCHAR(255) PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('user', 'admin', 'moderator')),

@@ -11,6 +11,7 @@ type Repository interface {
 	Close()
 	PostAccount(ctx context.Context, a *Account) error
 	GetAccountByEmail(ctx context.Context, email string) (*Account, error)
+	GetAccountById(ctx context.Context, id string) (*Account, error)
 }
 
 type accountRepository struct {
@@ -38,14 +39,14 @@ func (r *accountRepository) Close() {
 // Создание аккаунта
 func(r *accountRepository) PostAccount(ctx context.Context, a *Account) error {
 	_, err := r.db.ExecContext(
-		ctx, "INSERT INTO accounts(id, email, password, role) VALUES($1, $2, $3, $4)",
+		ctx, "INSERT INTO account(id, email, password, role) VALUES($1, $2, $3, $4)",
 		a.ID, a.Email, a.Password, a.Role)
 	return err	
 }
 
 // Получение аккаунта
 func(r *accountRepository) GetAccountByEmail(ctx context.Context, email string) (*Account, error) {
-	row := r.db.QueryRowContext(ctx, "SELECT * FROM accounts WHERE email = $1", email)
+	row := r.db.QueryRowContext(ctx, "SELECT id, email, password, role FROM account WHERE email = $1", email)
 
 	a := &Account{}
 
@@ -53,5 +54,16 @@ func(r *accountRepository) GetAccountByEmail(ctx context.Context, email string) 
 		return nil, err
 	}
 
+	return a, nil
+}
+
+func(r *accountRepository) GetAccountById(ctx context.Context, id string) (*Account, error) {
+	row := r.db.QueryRowContext(ctx, "SELECT id, email, password, role FROM account WHERE id = $1", id)
+
+	a :=  &Account{}
+
+	if err := row.Scan(&a.ID, &a.Email, &a.Password, &a.Role); err != nil {
+		return nil, err
+	}
 	return a, nil
 }

@@ -7,7 +7,9 @@ import (
 
 	"github.com/GrudTrigger/workly-backend/auth"
 	"github.com/GrudTrigger/workly-backend/gateway/handlers"
+	"github.com/GrudTrigger/workly-backend/gateway/pkg/middleware"
 )
+var secret = "3KX9v7z5w8y$B&E)H@McQfTjWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y/B?E(H+MbQ"
 
 func main() {
 	router := http.NewServeMux()
@@ -15,11 +17,16 @@ func main() {
 	if err != nil {
 		fmt.Println("auth-service-start", err)
 	}
-	handlers.NewAuthHandler(router, authClient)
+	
+	handlers.NewAuthHandler(router, authClient, secret)
+
+	stack := middleware.Chain(
+		middleware.Logging,
+	)
 
 	server := http.Server{
 		Addr: ":8080",
-		Handler: router,
+		Handler: stack(router),
 	}
 	log.Println("API GATEWAY работает на :8080")
 	log.Fatal(server.ListenAndServe())

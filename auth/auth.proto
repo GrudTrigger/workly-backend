@@ -7,7 +7,7 @@ message Account {
 	string id = 1;
 	string email = 2;
 	string password = 3;
-	uint32 role = 4;
+	string role = 4;
 }
 
 message RegisterRequest {
@@ -29,11 +29,22 @@ message LoginResponse {
 	string token = 1;
 }
 
+message GetMeRequest {
+	string id = 1;
+}
+
+message GetMeResponse {
+	Account account = 1;
+}
+
 
 service AuthService {
 	rpc Register (RegisterRequest) returns (RegisterResponse) {
 	}
 
 	rpc Login (LoginRequest) returns (LoginResponse) {
+	}
+
+	rpc GetMe (GetMeRequest) returns (GetMeResponse) {
 	}
 }

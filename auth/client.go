@@ -53,3 +53,16 @@ func(c *Client) Login(ctx context.Context ,email, password string) (string, erro
 	}
 	return result.Token, nil
 }
+
+func(c *Client) GetMe(ctx context.Context, id string) (*Account, error) {
+	account, err := c.service.GetMe(ctx, &pb.GetMeRequest{Id: id})
+	if err != nil {
+		return &Account{}, err
+	}
+	return &Account{
+		ID: account.Account.Id,
+		Email: account.Account.Email,
+		Password: account.Account.Password,
+		Role: account.Account.Role,
+	}, nil
+}
