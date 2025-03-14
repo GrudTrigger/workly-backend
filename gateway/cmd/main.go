@@ -13,11 +13,11 @@ var secret = "3KX9v7z5w8y$B&E)H@McQfTjWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y/B?E(H+MbQ"
 
 func main() {
 	router := http.NewServeMux()
-	authClient, err := auth.NewClient("localhost:8081")
+	authClient, err := auth.NewClient("auth_service:8081")
 	if err != nil {
 		fmt.Println("auth-service-start", err)
 	}
-	
+	fmt.Println(authClient)
 	handlers.NewAuthHandler(router, authClient, secret)
 
 	stack := middleware.Chain(

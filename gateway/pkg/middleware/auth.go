@@ -21,6 +21,7 @@ func IsAuthed(next http.Handler, secret string) http.Handler {
 		}
 
 		token := strings.TrimPrefix(authedHeader, "Bearer ")
+
 		if token == "" {
 			http.Error(w, "invalid token format", http.StatusUnauthorized)
 			return

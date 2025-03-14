@@ -68,7 +68,6 @@ func(handler *AuthHandlers) GetMe() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		userData, ok := ctx.Value(middleware.UserContextKey).(*jwt.JWTData)
-		
 		if !ok || userData == nil {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
