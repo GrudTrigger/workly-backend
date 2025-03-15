@@ -24,7 +24,8 @@ WORKDIR /usr/bin
 
 # Копируем бинарный файл из предыдущего этапа
 COPY --from=builder /go/bin .
-
+# Копируем env файл
+COPY --from=builder /app/auth/.env_auth . 
 # Открываем порт, если требуется (замените на нужный)
 EXPOSE 8081
 
