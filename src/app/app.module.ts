@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from '../auth/auth.module';
-import { UserModule } from '../user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { CompanyModule } from 'src/company/company.module';
+import { FilesModule } from 'src/files/files.module';
+import { ProfileModule } from 'src/profile/profile.module';
+import { VacancyModule } from 'src/vacancy/vacancy.module';
+import { AuthModule } from '../auth/auth.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -13,6 +16,9 @@ import { CompanyModule } from 'src/company/company.module';
     AuthModule,
     UserModule,
     CompanyModule,
+    VacancyModule,
+    FilesModule,
+    ProfileModule,
   ],
   controllers: [],
   providers: [],

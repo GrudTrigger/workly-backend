@@ -5,8 +5,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { CreateCompanyDto } from './dto/create-company.dto';
 import { TokenUser } from '../types/user-types';
+import { CreateCompanyDto } from './dto/create-company.dto';
 import { GetAllCompanyDto } from './dto/get-all-company.dto';
 import { UploadCompanyDto } from './dto/upload-company.dto';
 
@@ -59,14 +59,19 @@ export class CompanyService {
       },
     });
   }
-
   async findById(id: number) {
-    return this.db.company.findUnique({
-      where: { id },
-      include: {
-        company_founder: true,
-      },
-    });
+    try {
+      return this.db.company.findUnique({
+        where: { id },
+        include: {
+          company_founder: true,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(
+        `Ошибка при получении компании по id - ${error}`,
+      );
+    }
   }
 
   async upload(user: TokenUser, id: number, dto: UploadCompanyDto) {
@@ -94,5 +99,39 @@ export class CompanyService {
         ...dto,
       },
     });
+  }
+
+  async delete(idCompany: number, idUser: number) {
+    const company = await this.db.company.findUnique({
+      where: {
+        id: idCompany,
+      },
+      include: {
+        company_founder: true,
+      },
+    });
+    if (!company) {
+      throw new BadRequestException(
+        `Компания с id - ${idCompany} не существует`,
+      );
+    }
+
+    if (idUser !== company?.company_founder.id) {
+      throw new BadRequestException(
+        'Удалять компанию может только ее создать!',
+      );
+    }
+    try {
+      const deleteCompany = await this.db.company.delete({
+        where: {
+          id: idCompany,
+        },
+      });
+      if (deleteCompany) {
+        return `Компания ${deleteCompany.name} удалена!`;
+      }
+    } catch (error) {
+      throw new BadRequestException(`Ошибка при удалении компании - ${error}`);
+    }
   }
 }

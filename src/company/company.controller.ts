@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -9,12 +10,12 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { CompanyService } from './company.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Company } from '@prisma/client';
 import { JwtAuthGuard } from 'src/guards/jwt-guard';
 import { RequestWithUser } from '../types/user-types';
+import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { Company } from '@prisma/client';
 import { GetAllCompanyDto } from './dto/get-all-company.dto';
 import { UploadCompanyDto } from './dto/upload-company.dto';
 
@@ -36,13 +37,13 @@ export class CompanyController {
   @ApiOperation({ summary: 'Получение всех компаний' })
   @Get()
   async findAll(@Query() query: GetAllCompanyDto) {
-    return this.companyService.findAll(query);
+    return await this.companyService.findAll(query);
   }
 
   @ApiOperation({ summary: 'Получение компании по id' })
   @Get(':id')
   async findById(@Param('id') id: number) {
-    return this.companyService.findById(id);
+    return await this.companyService.findById(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -57,5 +58,12 @@ export class CompanyController {
     @Body() dto: UploadCompanyDto,
   ) {
     await this.companyService.upload(req.user, id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Удаление компании' })
+  @Delete(':id')
+  async delete(@Param('id') id: number, @Request() req: RequestWithUser) {
+    return await this.companyService.delete(id, req.user.id);
   }
 }

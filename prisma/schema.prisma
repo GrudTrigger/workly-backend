@@ -14,22 +14,99 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @unique @default(autoincrement())
-  email     String   @unique
-  password  String
-  role      String
+  id       Int      @id @unique @default(autoincrement())
+  email    String   @unique
+  password String
+  role     String
+  company  Company?
+  profile  Profile?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Company   Company?
+}
+
+model Profile {
+  id           Int          @id @unique @default(autoincrement())
+  last_name    String
+  first_name   String
+  city         String
+  position     String
+  email        String
+  phone_nubmer Int
+  about_me     String       @db.Text
+  skills       String
+  experiences  Experience[]
+  educations   Education[]
+  user         User         @relation(fields: [userId], references: [id])
+  userId       Int          @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Experience {
+  id               Int      @id @unique @default(autoincrement())
+  start            String
+  ending           Boolean
+  end              String?
+  company          String
+  position         String
+  Responsibilities String   @db.Text
+  profile          Profile? @relation(fields: [profileId], references: [id])
+  profileId        Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Education {
+  id             Int      @id @unique @default(autoincrement())
+  name           String
+  faculty        String
+  end_year       Int
+  specialization String
+  profile        Profile? @relation(fields: [profileId], references: [id])
+  profileId      Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Company {
-  id                Int    @id @unique @default(autoincrement())
-  name              String @unique
+  id                Int       @id @unique @default(autoincrement())
+  name              String    @unique
   avatar_path       String
-  description       String @db.Text
+  description       String    @db.Text
   city              String
   field_of_activity String
-  company_founder   User   @relation(fields: [userId], references: [id])
-  userId            Int    @unique
+  company_founder   User      @relation(fields: [userId], references: [id])
+  userId            Int       @unique
+  vacancy           Vacancy[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vacancy {
+  id                 Int      @id @unique @default(autoincrement())
+  position           String
+  description        String
+  salary             Salary?
+  work_experience    String
+  type_of_employment String
+  format_work        String
+  skills             String
+  company            Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId          Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Salary {
+  id          Int     @id @unique @default(autoincrement())
+  salary_from Int
+  salary_to   Int
+  vacancy     Vacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  vacancyId   Int     @unique
 }
