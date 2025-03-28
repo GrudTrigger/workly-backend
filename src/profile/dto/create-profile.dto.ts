@@ -5,6 +5,7 @@ import {
   IsArray,
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsString,
 } from 'class-validator';
@@ -21,6 +22,15 @@ export class CreateProfileDto {
   @IsString()
   @IsNotEmpty()
   first_name: string;
+
+  @ApiProperty({
+    example: 'Какая-то подписанная сылка на картинку',
+    description: 'Ссылка на картинку',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  avatar_path?: string;
 
   @ApiProperty({ example: 'Москва', description: 'Город', required: true })
   @IsString()
@@ -49,7 +59,7 @@ export class CreateProfileDto {
   })
   @IsPhoneNumber('RU')
   @IsNotEmpty()
-  phone_nubmer: number;
+  phone_number: number;
 
   @ApiProperty({
     example: 'Какой-то очень длинный текст о себе',
@@ -74,6 +84,7 @@ export class CreateProfileDto {
     description: 'Массив опыта работы',
     required: false,
   })
+  @IsOptional()
   @IsArray()
   @Type(() => ExperienceDto)
   experiences?: ExperienceDto[];

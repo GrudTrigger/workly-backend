@@ -14,31 +14,32 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @unique @default(autoincrement())
-  email    String   @unique
-  password String
-  role     String
-  company  Company?
-  profile  Profile?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int      @id @unique @default(autoincrement())
+  email         String   @unique
+  password      String
+  role          String
+  company       Company?
+  profile       Profile?
+  refresh_token String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Profile {
   id           Int          @id @unique @default(autoincrement())
   last_name    String
   first_name   String
+  avatar_path  String?
   city         String
   position     String
   email        String
-  phone_nubmer Int
+  phone_number Int
   about_me     String       @db.Text
   skills       String
   experiences  Experience[]
   educations   Education[]
-  user         User         @relation(fields: [userId], references: [id])
-  userId       Int          @unique
+  user         User?        @relation(fields: [userId], references: [id])
+  userId       Int?         @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -51,7 +52,7 @@ model Experience {
   end              String?
   company          String
   position         String
-  Responsibilities String   @db.Text
+  responsibilities String   @db.Text
   profile          Profile? @relation(fields: [profileId], references: [id])
   profileId        Int?
 

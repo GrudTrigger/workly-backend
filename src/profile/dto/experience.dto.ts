@@ -46,4 +46,13 @@ export class ExperienceDto {
   @IsString()
   @IsNotEmpty()
   position: string;
+
+  @ApiProperty({
+    example: 'Какой-то длинный текст',
+    description: 'Обязанности',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  responsibilities: string;
 }

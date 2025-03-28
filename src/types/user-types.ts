@@ -4,5 +4,4 @@ export interface RequestWithUser extends Request {
 
 export interface TokenUser {
   id: number;
-  role: 'user' | 'admin';
 }
