@@ -14,6 +14,7 @@ export class ProfileController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Request() req: RequestWithUser, @Body() dto: CreateProfileDto) {
-    return await this.profileService.create(req.user.id, dto);
+    console.log(req.user);
+    // return await this.profileService.create(req.user.id, dto);
   }
 }

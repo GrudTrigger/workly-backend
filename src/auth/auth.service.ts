@@ -40,6 +40,12 @@ export class AuthService {
         parseInt(process.env.JWT_ACCESS_TOKEN_EXPIRATION_MS!),
     );
 
+    const expiresRefreshToken = new Date();
+    expiresRefreshToken.setMilliseconds(
+      expiresRefreshToken.getTime() +
+        parseInt(process.env.JWT_REFRESH_TOKEN_EXPIRATION_MS!),
+    );
+
     const tokenPayload: TokenUser = {
       id: newUser.id,
     };
@@ -47,11 +53,22 @@ export class AuthService {
       secret: process.env.SECRET!,
       expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRATION_MS}ms`,
     });
+    const refreshToken = this.jwtService.sign(tokenPayload, {
+      secret: process.env.SERCRET_REFRESH!,
+      expiresIn: `${process.env.JWT_REFRESH_TOKEN_EXPIRATION_MS}ms`,
+    });
+
     response.cookie('Authentication', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       expires: expiresAccessToken,
     });
+    response.cookie('Refresh', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      expires: expiresRefreshToken,
+    });
+
     return {
       user_data: { ...newUser, password: undefined },
     };
