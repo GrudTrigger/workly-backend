@@ -17,43 +17,47 @@ export class ProfileService {
         'У данного пользователя профиль уже создан',
       );
     }
-    await this.db.profile.create({
-      data: {
-        first_name: dto.first_name,
-        last_name: dto.last_name,
-        avatar_path: dto.avatar_path,
-        city: dto.city,
-        position: dto.position,
-        email: dto.email,
-        phone_number: dto.phone_number,
-        about_me: dto.about_me,
-        skills: dto.skills,
-        experiences: dto.experiences
-          ? {
-              create: dto.experiences.map((exp) => ({
-                start: exp.start,
-                ending: exp.ending,
-                end: exp.end ? exp.end : undefined,
-                company: exp.company,
-                position: exp.position,
-                responsibilities: exp.responsibilities,
-              })),
-            }
-          : undefined,
-        educations: {
-          create: dto.educations.map((ed) => ({
-            name: ed.name,
-            faculty: ed.faculty,
-            end_year: ed.end_year,
-            specialization: ed.specialization,
-          })),
+    try {
+      await this.db.profile.create({
+        data: {
+          first_name: dto.first_name,
+          last_name: dto.last_name,
+          avatar_path: dto.avatar_path,
+          city: dto.city,
+          position: dto.position,
+          email: dto.email,
+          phone_number: dto.phone_number,
+          about_me: dto.about_me,
+          skills: dto.skills,
+          experiences: dto.experiences
+            ? {
+                create: dto.experiences.map((exp) => ({
+                  start: exp.start,
+                  ending: exp.ending,
+                  end: exp.end ? exp.end : undefined,
+                  company: exp.company,
+                  position: exp.position,
+                  responsibilities: exp.responsibilities,
+                })),
+              }
+            : undefined,
+          educations: {
+            create: dto.educations.map((ed) => ({
+              name: ed.name,
+              faculty: ed.faculty,
+              end_year: ed.end_year,
+              specialization: ed.specialization,
+            })),
+          },
         },
-      },
-      include: {
-        experiences: true,
-        educations: true,
-      },
-    });
-    return { message: 'success' };
+        include: {
+          experiences: true,
+          educations: true,
+        },
+      });
+      return { message: 'success' };
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
   }
 }

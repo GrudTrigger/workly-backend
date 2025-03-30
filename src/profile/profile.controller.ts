@@ -15,6 +15,6 @@ export class ProfileController {
   @Post()
   async create(@Request() req: RequestWithUser, @Body() dto: CreateProfileDto) {
     console.log(req.user);
-    // return await this.profileService.create(req.user.id, dto);
+    return await this.profileService.create(req.user.id, dto);
   }
 }
