@@ -54,19 +54,28 @@ export class AuthService {
       expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRATION_MS}ms`,
     });
     const refreshToken = this.jwtService.sign(tokenPayload, {
-      secret: process.env.SERCRET_REFRESH!,
+      secret: process.env.SECRET_REFRESH!,
       expiresIn: `${process.env.JWT_REFRESH_TOKEN_EXPIRATION_MS}ms`,
     });
 
+    await this.userService.updateUser(newUser.id, refreshToken);
+
     response.cookie('Authentication', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       expires: expiresAccessToken,
+      sameSite: 'lax',
+      domain: 'localhost',
+      path: '/',
     });
+
     response.cookie('Refresh', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       expires: expiresRefreshToken,
+      sameSite: 'lax',
+      domain: 'localhost',
+      path: '/',
     });
 
     return {
@@ -99,7 +108,7 @@ export class AuthService {
       expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRATION_MS}ms`,
     });
     const refreshToken = this.jwtService.sign(tokenPayload, {
-      secret: process.env.SERCRET_REFRESH!,
+      secret: process.env.SECRET_REFRESH!,
       expiresIn: `${process.env.JWT_REFRESH_TOKEN_EXPIRATION_MS}ms`,
     });
 
@@ -109,11 +118,18 @@ export class AuthService {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       expires: expiresAccessToken,
+      sameSite: 'none',
+      domain: 'localhost',
+      path: '/',
     });
+
     response.cookie('Refresh', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       expires: expiresRefreshToken,
+      sameSite: 'lax',
+      domain: 'localhost',
+      path: '/',
     });
   }
 

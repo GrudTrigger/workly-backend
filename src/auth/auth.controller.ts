@@ -7,7 +7,6 @@ import { CurrentUser } from '../decorators/current-user.decorator';
 import { Response } from 'express';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
-import { User } from '@prisma/client';
 
 @ApiTags('Авторизация')
 @Controller('auth')
