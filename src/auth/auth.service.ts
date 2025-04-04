@@ -118,7 +118,7 @@ export class AuthService {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       expires: expiresAccessToken,
-      sameSite: 'none',
+      sameSite: 'lax',
       domain: 'localhost',
       path: '/',
     });
@@ -131,6 +131,12 @@ export class AuthService {
       domain: 'localhost',
       path: '/',
     });
+    return {
+      user_data: {
+        ...user,
+        password: undefined,
+      },
+    };
   }
 
   async verifyUser(email: string, password: string) {
@@ -160,7 +166,7 @@ export class AuthService {
         throw new UnauthorizedException();
       }
       return user;
-    } catch (err) {
+    } catch {
       throw new UnauthorizedException('Не валидный refresh token');
     }
   }
